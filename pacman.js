@@ -255,6 +255,13 @@ function resetMaze() {
     });
 }
 
+// Desenhar vidas
+function drawLives() {
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Vidas: " + lives, canvas.width - 100, 20);
+}
+
 // Desenhar Pac-Man
 function drawPacman() {
     ctx.fillStyle = "yellow";
@@ -315,6 +322,12 @@ function draw() {
 
     drawPacman(); // Desenhar Pac-Man
     drawGhosts(); // Desenhar Fantasmas
+
+    // Desenhar Pontuação e Vidas
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Pontuação: " + score, 10, 20);
+    drawLives();
 }
 
 // Loop do jogo
@@ -324,6 +337,7 @@ function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
 }
+
 
 // Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
