@@ -121,6 +121,27 @@ function drawGhosts() {
     });
 }
 
+// Elemento para exibir mensagens no jogo
+const messageElement = document.createElement("div");
+messageElement.style.position = "absolute";
+messageElement.style.top = "50%";
+messageElement.style.left = "50%";
+messageElement.style.transform = "translate(-50%, -50%)";
+messageElement.style.color = "white";
+messageElement.style.fontSize = "24px";
+messageElement.style.textAlign = "center";
+messageElement.style.display = "none";
+document.body.appendChild(messageElement);
+
+// Função para exibir mensagens no jogo
+function showMessage(message, duration = 2000) {
+    messageElement.textContent = message;
+    messageElement.style.display = "block";
+    setTimeout(() => {
+        messageElement.style.display = "none";
+    }, duration);
+}
+
 // Atualizar o jogo
 function update() {
     let newX = pacman.x;
@@ -171,7 +192,7 @@ function update() {
         level++;
         pacman.speed += 0.5;
         ghosts.forEach(ghost => ghost.speed += 0.5);
-        alert("Nível " + level + "!");
+        showMessage(`Nível ${level}!`);
         resetMaze();
     }
 
@@ -230,11 +251,11 @@ function updateGhosts() {
             } else {
                 lives--;
                 if (lives > 0) {
-                    alert("Você perdeu uma vida! Vidas restantes: " + lives);
+                    showMessage(`Você perdeu uma vida! Vidas restantes: ${lives}`);
                     resetPositions();
                 } else {
-                    alert("Game Over! Pontuação: " + score);
-                    document.location.reload();
+                    showMessage(`Game Over! Pontuação: ${score}`, 5000);
+                    setTimeout(() => document.location.reload(), 5000);
                 }
             }
         }
@@ -342,7 +363,6 @@ function gameLoop() {
     draw();
     requestAnimationFrame(gameLoop);
 }
-
 
 // Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
