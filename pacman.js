@@ -46,6 +46,7 @@ let pacman = {
 
 let level = 1;
 let lives = 3;
+let gameOver = false; // Variável para controlar o estado do jogo
 
 // Fantasmas
 let ghosts = [
@@ -145,6 +146,7 @@ function showMessage(message, duration = 2000, isGameOver = false) {
         document.body.style.backgroundImage = "none"; // Remover qualquer imagem de fundo
         messageElement.style.color = "yellow"; // Texto amarelo
         messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
+        gameOver = true; // Marcar o jogo como encerrado
     } else {
         // Configuração padrão para outras mensagens
         messageElement.style.color = "white";
@@ -163,6 +165,8 @@ function showMessage(message, duration = 2000, isGameOver = false) {
 
 // Atualizar o jogo
 function update() {
+    if (gameOver) return; // Interromper a atualização se o jogo estiver encerrado
+
     let newX = pacman.x;
     let newY = pacman.y;
 
@@ -227,6 +231,8 @@ function update() {
 
 // Atualizar Fantasmas (IA melhorada)
 function updateGhosts() {
+    if (gameOver) return; // Interromper a atualização dos fantasmas se o jogo estiver encerrado
+
     ghosts.forEach(ghost => {
         let dx = pacman.x - ghost.x;
         let dy = pacman.y - ghost.y;
