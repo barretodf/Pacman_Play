@@ -1,6 +1,6 @@
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
-const TILE_SIZE = 32; // Certifique-se de que TILE_SIZE seja definido antes de usar
+const TILE_SIZE = 28; // Reduzir o tamanho das trilhas para diminuir a largura dos corredores
 // Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = pílula, 4 = casa dos fantasmas)
 const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -33,7 +33,7 @@ canvas.height = maze.length * TILE_SIZE; // Ajustar altura com base no número d
 const ctx = canvas.getContext("2d");
 
 // Configuração do jogo
-const PACMAN_RADIUS = 14;
+const PACMAN_RADIUS = TILE_SIZE / 2.1; // Aumentar o raio do Pac-Man para torná-lo maior
 let score = 0;
 let pacman = { 
     x: 1 * TILE_SIZE + TILE_SIZE / 2, 
@@ -50,10 +50,10 @@ let lives = 3;
 
 // Fantasmas
 let ghosts = [
-    { x: 6 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
-    { x: 7 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
-    { x: 6 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
-    { x: 7 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
+    { x: 6 * TILE_SIZE + TILE_SIZE / 2, y: 4 * TILE_SIZE + TILE_SIZE / 2, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
+    { x: 7 * TILE_SIZE + TILE_SIZE / 2, y: 4 * TILE_SIZE + TILE_SIZE / 2, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
+    { x: 6 * TILE_SIZE + TILE_SIZE / 2, y: 5 * TILE_SIZE + TILE_SIZE / 2, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
+    { x: 7 * TILE_SIZE + TILE_SIZE / 2, y: 5 * TILE_SIZE + TILE_SIZE / 2, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
 ];
 
 // Capturar entrada do jogador
@@ -173,8 +173,8 @@ function updateGhosts() {
         if (Math.abs(ghost.x - pacman.x) < PACMAN_RADIUS && Math.abs(ghost.y - pacman.y) < PACMAN_RADIUS) {
             if (ghost.vulnerable) {
                 score += 200;
-                ghost.x = (6 + ghosts.indexOf(ghost)) * TILE_SIZE;
-                ghost.y = 4 * TILE_SIZE;
+                ghost.x = (6 + ghosts.indexOf(ghost)) * TILE_SIZE + TILE_SIZE / 2;
+                ghost.y = 4 * TILE_SIZE + TILE_SIZE / 2;
             } else {
                 lives--;
                 if (lives > 0) {
@@ -196,8 +196,8 @@ function resetPositions() {
     pacman.direction = "STOP";
 
     ghosts.forEach((ghost, index) => {
-        ghost.x = (6 + index) * TILE_SIZE;
-        ghost.y = 4 * TILE_SIZE;
+        ghost.x = (6 + index) * TILE_SIZE + TILE_SIZE / 2;
+        ghost.y = 4 * TILE_SIZE + TILE_SIZE / 2;
     });
 }
 
@@ -215,6 +215,47 @@ function drawLives() {
     ctx.fillText("Vidas: " + lives, canvas.width - 100, 20);
 }
 
+// Desenhar Pac-Man
+function drawPacman() {
+    ctx.fillStyle = "yellow";
+
+    // Determinar o ângulo da boca com base na direção
+    let startAngle, endAngle;
+    if (pacman.direction === "LEFT") {
+        startAngle = Math.PI + pacman.mouthAngle * Math.PI;
+        endAngle = Math.PI - pacman.mouthAngle * Math.PI;
+    } else if (pacman.direction === "RIGHT") {
+        startAngle = pacman.mouthAngle * Math.PI;
+        endAngle = 2 * Math.PI - pacman.mouthAngle * Math.PI;
+    } else if (pacman.direction === "UP") {
+        startAngle = 1.5 * Math.PI + pacman.mouthAngle * Math.PI;
+        endAngle = 1.5 * Math.PI - pacman.mouthAngle * Math.PI;
+    } else if (pacman.direction === "DOWN") {
+        startAngle = 0.5 * Math.PI + pacman.mouthAngle * Math.PI;
+        endAngle = 0.5 * Math.PI - pacman.mouthAngle * Math.PI;
+    } else {
+        // Caso o Pac-Man esteja parado, a boca ficará virada para a direita
+        startAngle = pacman.mouthAngle * Math.PI;
+        endAngle = 2 * Math.PI - pacman.mouthAngle * Math.PI;
+    }
+
+    // Desenhar o Pac-Man com a boca na direção correta
+    ctx.beginPath();
+    ctx.arc(pacman.x, pacman.y, PACMAN_RADIUS, startAngle, endAngle);
+    ctx.lineTo(pacman.x, pacman.y);
+    ctx.fill();
+}
+
+// Desenhar Fantasmas
+function drawGhosts() {
+    ghosts.forEach(ghost => {
+        ctx.fillStyle = ghost.vulnerable ? "blue" : ghost.color; // Usar a cor específica de cada fantasma ou azul se vulnerável
+        ctx.beginPath();
+        ctx.arc(ghost.x, ghost.y, PACMAN_RADIUS * 1.1, 0, Math.PI * 2); // Aumentar o tamanho dos fantasmas
+        ctx.fill();
+    });
+}
+
 // Verificar se o labirinto está sendo desenhado corretamente
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpar o canvas antes de desenhar
@@ -224,38 +265,26 @@ function draw() {
         for (let col = 0; col < maze[row].length; col++) {
             if (maze[row][col] === 1) {
                 ctx.fillStyle = "blue"; // Cor das paredes
-                ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE); // Preencher as paredes
             } else if (maze[row][col] === 2) {
                 ctx.fillStyle = "white"; // Cor dos pontos
                 ctx.beginPath();
-                ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 5, 0, Math.PI * 2);
+                ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 4, 0, Math.PI * 2); // Reduzir o tamanho dos pontos
                 ctx.fill();
             } else if (maze[row][col] === 3) {
                 ctx.fillStyle = "gold"; // Cor das pílulas
                 ctx.beginPath();
-                ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 8, 0, Math.PI * 2);
+                ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 6, 0, Math.PI * 2); // Reduzir o tamanho das pílulas
                 ctx.fill();
             } else if (maze[row][col] === 4) {
                 ctx.fillStyle = "purple"; // Cor da casa dos fantasmas
-                ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+                ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE); // Preencher a casa dos fantasmas
             }
         }
     }
 
-    // Desenhar Pac-Man
-    ctx.fillStyle = "yellow";
-    ctx.beginPath();
-    ctx.arc(pacman.x, pacman.y, PACMAN_RADIUS, pacman.mouthAngle * Math.PI, (2 - pacman.mouthAngle) * Math.PI);
-    ctx.lineTo(pacman.x, pacman.y);
-    ctx.fill();
-
-    // Desenhar Fantasmas
-    ghosts.forEach(ghost => {
-        ctx.fillStyle = ghost.vulnerable ? "blue" : ghost.color; // Usar a cor específica de cada fantasma ou azul se vulnerável
-        ctx.beginPath();
-        ctx.arc(ghost.x, ghost.y, PACMAN_RADIUS, 0, Math.PI * 2);
-        ctx.fill();
-    });
+    drawPacman(); // Desenhar Pac-Man
+    drawGhosts(); // Desenhar Fantasmas
 
     // Desenhar Pontuação e Vidas
     ctx.fillStyle = "white";
