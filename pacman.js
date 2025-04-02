@@ -1,10 +1,10 @@
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
 const TILE_SIZE = 32; // Certifique-se de que TILE_SIZE seja definido antes de usar
-// Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = super ponto, 4 = casa dos fantasmas)
+// Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = pílula, 4 = casa dos fantasmas)
 const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,2,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,2,0,1],
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,1,1,3,2,2,2,2,2,2,2,2,2,2,0,0], // Adicionadas pílulas (3)
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
@@ -25,7 +25,7 @@ const maze = [
     [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Adicionadas pílulas (3)
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
@@ -50,10 +50,10 @@ let lives = 3;
 
 // Fantasmas
 let ghosts = [
-    { x: 6 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false },
-    { x: 7 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.7, direction: "UP", color: "pink", vulnerable: false },
-    { x: 6 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false },
-    { x: 7 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false }
+    { x: 6 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
+    { x: 7 * TILE_SIZE, y: 4 * TILE_SIZE, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
+    { x: 6 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
+    { x: 7 * TILE_SIZE, y: 5 * TILE_SIZE, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
 ];
 
 // Capturar entrada do jogador
@@ -81,16 +81,16 @@ function update() {
     if (pacman.direction === "UP") newY -= pacman.speed;
     if (pacman.direction === "DOWN") newY += pacman.speed;
 
-    // Adicionar túneis (atravessar de um lado para o outro)
-    if (newX < 0) newX = canvas.width - TILE_SIZE / 2;
-    if (newX > canvas.width) newX = TILE_SIZE / 2;
+    // Adicionar lógica para túneis (atravessar de um lado para o outro)
+    if (newX < 0) newX = canvas.width - TILE_SIZE / 2; // Sai pela esquerda, entra pela direita
+    if (newX > canvas.width) newX = TILE_SIZE / 2; // Sai pela direita, entra pela esquerda
 
     if (!checkCollision(newX, newY)) {
         pacman.x = newX;
         pacman.y = newY;
     }
 
-    // Comer pontos e super pontos
+    // Comer pontos e pílulas
     let col = Math.floor(pacman.x / TILE_SIZE);
     let row = Math.floor(pacman.y / TILE_SIZE);
     if (maze[row][col] === 2) {
@@ -99,10 +99,19 @@ function update() {
     } else if (maze[row][col] === 3) {
         maze[row][col] = 0;
         score += 50;
-        // Tornar fantasmas vulneráveis por um curto período
-        ghosts.forEach(ghost => ghost.vulnerable = true);
+
+        // Tornar fantasmas vulneráveis e fazê-los fugir
+        ghosts.forEach(ghost => {
+            ghost.vulnerable = true;
+            ghost.fleeing = true;
+        });
+
+        // Reverter estado dos fantasmas após 5 segundos
         setTimeout(() => {
-            ghosts.forEach(ghost => ghost.vulnerable = false);
+            ghosts.forEach(ghost => {
+                ghost.vulnerable = false;
+                ghost.fleeing = false;
+            });
         }, 5000);
     }
 
@@ -131,10 +140,20 @@ function updateGhosts() {
         let dx = pacman.x - ghost.x;
         let dy = pacman.y - ghost.y;
 
-        if (Math.random() < 0.5) {
-            ghost.direction = dx > 0 ? "RIGHT" : "LEFT";
+        if (ghost.fleeing) {
+            // Fantasmas fogem do Pac-Man
+            if (Math.abs(dx) > Math.abs(dy)) {
+                ghost.direction = dx > 0 ? "LEFT" : "RIGHT";
+            } else {
+                ghost.direction = dy > 0 ? "UP" : "DOWN";
+            }
         } else {
-            ghost.direction = dy > 0 ? "DOWN" : "UP";
+            // Fantasmas perseguem o Pac-Man
+            if (Math.random() < 0.5) {
+                ghost.direction = dx > 0 ? "RIGHT" : "LEFT";
+            } else {
+                ghost.direction = dy > 0 ? "DOWN" : "UP";
+            }
         }
 
         let newX = ghost.x;
@@ -212,7 +231,7 @@ function draw() {
                 ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 5, 0, Math.PI * 2);
                 ctx.fill();
             } else if (maze[row][col] === 3) {
-                ctx.fillStyle = "gold"; // Cor dos super pontos
+                ctx.fillStyle = "gold"; // Cor das pílulas
                 ctx.beginPath();
                 ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 8, 0, Math.PI * 2);
                 ctx.fill();
@@ -253,7 +272,15 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// Certifique-se de que o jogo seja iniciado corretamente
+// Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
-    gameLoop(); // Iniciar o loop do jogo após o DOM estar carregado
+    const startButton = document.getElementById("startButton");
+    const canvas = document.getElementById("gameCanvas");
+
+    startButton.addEventListener("click", () => {
+        startButton.style.display = "none"; // Esconder o botão após iniciar o jogo
+        canvas.style.display = "block"; // Mostrar o canvas
+        draw(); // Garantir que o labirinto seja desenhado inicialmente
+        gameLoop(); // Iniciar o loop do jogo
+    });
 });
