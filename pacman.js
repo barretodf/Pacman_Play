@@ -65,9 +65,12 @@ document.addEventListener("keydown", function(event) {
 
 // Função para verificar colisão com paredes
 function checkCollision(x, y) {
-    let col = Math.floor((x - TILE_SIZE / 2) / TILE_SIZE);
-    let row = Math.floor((y - TILE_SIZE / 2) / TILE_SIZE);
-    return maze[row][col] === 1;
+    let col = Math.floor(x / TILE_SIZE);
+    let row = Math.floor(y / TILE_SIZE);
+
+    // Ajustar para verificar se o centro do Pac-Man ou fantasma está dentro de uma parede
+    const withinBounds = col >= 0 && col < maze[0].length && row >= 0 && row < maze.length;
+    return withinBounds && maze[row][col] === 1;
 }
 
 // Função para desenhar um fantasma diretamente no canvas
@@ -132,6 +135,7 @@ function update() {
     if (newX < TILE_SIZE / 2) newX = canvas.width - TILE_SIZE / 2; // Sai pela esquerda, entra pela direita
     if (newX > canvas.width - TILE_SIZE / 2) newX = TILE_SIZE / 2; // Sai pela direita, entra pela esquerda
 
+    // Verificar colisão antes de atualizar a posição
     if (!checkCollision(newX, newY)) {
         pacman.x = newX;
         pacman.y = newY;
@@ -211,6 +215,7 @@ function updateGhosts() {
         if (ghost.direction === "UP") newY -= ghost.speed;
         if (ghost.direction === "DOWN") newY += ghost.speed;
 
+        // Verificar colisão antes de atualizar a posição
         if (!checkCollision(newX, newY)) {
             ghost.x = newX;
             ghost.y = newY;
