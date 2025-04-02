@@ -130,6 +130,10 @@ messageElement.style.transform = "translate(-50%, -50%)";
 messageElement.style.color = "white";
 messageElement.style.fontSize = "24px";
 messageElement.style.textAlign = "center";
+messageElement.style.backgroundColor = "black"; // Fundo preto
+messageElement.style.border = "2px solid white"; // Bordas brancas
+messageElement.style.padding = "10px 20px"; // Espaçamento interno
+messageElement.style.borderRadius = "5px"; // Bordas arredondadas
 messageElement.style.display = "none";
 document.body.appendChild(messageElement);
 
