@@ -44,7 +44,6 @@ let pacman = {
     mouthOpening: true // Direção da animação
 };
 
-// Configuração adicional
 let level = 1;
 let lives = 3;
 
@@ -69,6 +68,54 @@ function checkCollision(x, y) {
     let col = Math.floor(x / TILE_SIZE);
     let row = Math.floor(y / TILE_SIZE);
     return maze[row][col] === 1;
+}
+
+// Função para desenhar um fantasma diretamente no canvas
+function drawGhost(ctx, x, y, size, color) {
+    const scaledSize = PACMAN_RADIUS * 2; // Ajustar o tamanho dos fantasmas para a altura do Pac-Man
+    const bodyHeight = scaledSize * 0.8; // Altura do corpo do fantasma
+    const arcRadius = scaledSize / 2; // Raio do arco superior
+
+    // Desenhar o corpo do fantasma
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(x, y, arcRadius, Math.PI, 0, false); // Arco superior
+    ctx.lineTo(x + arcRadius, y + bodyHeight); // Lado direito
+    for (let i = 0; i < 3; i++) {
+        // Desenhar ondulações na base
+        const waveX = x + arcRadius - (arcRadius * 2 * (i + 1)) / 3;
+        const waveY = y + bodyHeight + (i % 2 === 0 ? scaledSize * 0.1 : 0);
+        ctx.lineTo(waveX, waveY);
+    }
+    ctx.lineTo(x - arcRadius, y + bodyHeight); // Lado esquerdo
+    ctx.closePath();
+    ctx.fill();
+
+    // Desenhar os olhos
+    const eyeOffsetX = scaledSize * 0.2;
+    const eyeOffsetY = scaledSize * 0.2;
+    const eyeRadius = scaledSize * 0.1;
+
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(x - eyeOffsetX, y - eyeOffsetY, eyeRadius, 0, Math.PI * 2); // Olho esquerdo
+    ctx.arc(x + eyeOffsetX, y - eyeOffsetY, eyeRadius, 0, Math.PI * 2); // Olho direito
+    ctx.fill();
+
+    // Desenhar as pupilas
+    const pupilRadius = scaledSize * 0.05;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(x - eyeOffsetX, y - eyeOffsetY, pupilRadius, 0, Math.PI * 2); // Pupila esquerda
+    ctx.arc(x + eyeOffsetX, y - eyeOffsetY, pupilRadius, 0, Math.PI * 2); // Pupila direita
+    ctx.fill();
+}
+
+// Atualizar a função de desenhar fantasmas para usar o tamanho ajustado
+function drawGhosts() {
+    ghosts.forEach(ghost => {
+        drawGhost(ctx, ghost.x, ghost.y, PACMAN_RADIUS * 2, ghost.color);
+    });
 }
 
 // Atualizar o jogo
@@ -106,13 +153,13 @@ function update() {
             ghost.fleeing = true;
         });
 
-        // Reverter estado dos fantasmas após 10 segundos (dobro do tempo anterior)
+        // Reverter estado dos fantasmas após 10 segundos
         setTimeout(() => {
             ghosts.forEach(ghost => {
                 ghost.vulnerable = false;
                 ghost.fleeing = false;
             });
-        }, 20000); // Alterado de 5000 para 10000
+        }, 20000);
     }
 
     // Verificar se todos os pontos foram coletados
@@ -208,13 +255,6 @@ function resetMaze() {
     });
 }
 
-// Desenhar vidas
-function drawLives() {
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText("Vidas: " + lives, canvas.width - 100, 20);
-}
-
 // Desenhar Pac-Man
 function drawPacman() {
     ctx.fillStyle = "yellow";
@@ -246,16 +286,6 @@ function drawPacman() {
     ctx.fill();
 }
 
-// Desenhar Fantasmas
-function drawGhosts() {
-    ghosts.forEach(ghost => {
-        ctx.fillStyle = ghost.vulnerable ? "blue" : ghost.color; // Usar a cor específica de cada fantasma ou azul se vulnerável
-        ctx.beginPath();
-        ctx.arc(ghost.x, ghost.y, PACMAN_RADIUS * 1.1, 0, Math.PI * 2); // Aumentar o tamanho dos fantasmas
-        ctx.fill();
-    });
-}
-
 // Verificar se o labirinto está sendo desenhado corretamente
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpar o canvas antes de desenhar
@@ -285,12 +315,6 @@ function draw() {
 
     drawPacman(); // Desenhar Pac-Man
     drawGhosts(); // Desenhar Fantasmas
-
-    // Desenhar Pontuação e Vidas
-    ctx.fillStyle = "white";
-    ctx.font = "20px Arial";
-    ctx.fillText("Pontuação: " + score, 10, 20);
-    drawLives();
 }
 
 // Loop do jogo
@@ -304,8 +328,6 @@ function gameLoop() {
 // Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startButton");
-    const canvas = document.getElementById("gameCanvas");
-
     startButton.addEventListener("click", () => {
         startButton.style.display = "none"; // Esconder o botão após iniciar o jogo
         canvas.style.display = "block"; // Mostrar o canvas
