@@ -4,7 +4,7 @@ const TILE_SIZE = 28; // Reduzir o tamanho das trilhas para diminuir a largura d
 // Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = pílula, 4 = casa dos fantasmas)
 const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [0,0,2,2,2,2,2,2,2,2,2,2,3,1,1,3,2,2,2,2,2,2,2,2,2,2,0,0], // Adicionadas pílulas (3)
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pontos e pílulas na parte superior
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
@@ -25,7 +25,7 @@ const maze = [
     [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Adicionadas pílulas (3)
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pontos e pílulas na parte inferior
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
@@ -65,8 +65,8 @@ document.addEventListener("keydown", function(event) {
 
 // Função para verificar colisão com paredes
 function checkCollision(x, y) {
-    let col = Math.floor(x / TILE_SIZE);
-    let row = Math.floor(y / TILE_SIZE);
+    let col = Math.floor((x - TILE_SIZE / 2) / TILE_SIZE);
+    let row = Math.floor((y - TILE_SIZE / 2) / TILE_SIZE);
     return maze[row][col] === 1;
 }
 
@@ -129,8 +129,8 @@ function update() {
     if (pacman.direction === "DOWN") newY += pacman.speed;
 
     // Adicionar lógica para túneis (atravessar de um lado para o outro)
-    if (newX < 0) newX = canvas.width - TILE_SIZE / 2; // Sai pela esquerda, entra pela direita
-    if (newX > canvas.width) newX = TILE_SIZE / 2; // Sai pela direita, entra pela esquerda
+    if (newX < TILE_SIZE / 2) newX = canvas.width - TILE_SIZE / 2; // Sai pela esquerda, entra pela direita
+    if (newX > canvas.width - TILE_SIZE / 2) newX = TILE_SIZE / 2; // Sai pela direita, entra pela esquerda
 
     if (!checkCollision(newX, newY)) {
         pacman.x = newX;
