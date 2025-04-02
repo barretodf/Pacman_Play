@@ -106,13 +106,13 @@ function update() {
             ghost.fleeing = true;
         });
 
-        // Reverter estado dos fantasmas após 5 segundos
+        // Reverter estado dos fantasmas após 10 segundos (dobro do tempo anterior)
         setTimeout(() => {
             ghosts.forEach(ghost => {
                 ghost.vulnerable = false;
                 ghost.fleeing = false;
             });
-        }, 5000);
+        }, 20000); // Alterado de 5000 para 10000
     }
 
     // Verificar se todos os pontos foram coletados
