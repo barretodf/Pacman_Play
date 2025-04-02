@@ -4,7 +4,7 @@ const TILE_SIZE = 28; // Reduzir o tamanho das trilhas para diminuir a largura d
 // Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = pílula, 4 = casa dos fantasmas)
 const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pontos e pílulas na parte superior
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pílula (3) adicionada
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
     [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
@@ -19,13 +19,13 @@ const maze = [
     [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1], // Pílula (3) adicionada
     [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
     [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
     [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
     [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pontos e pílulas na parte inferior
+    [0,0,2,2,2,2,2,2,2,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,0,0], // Pílula (3) adicionada
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
@@ -147,20 +147,33 @@ function showMessage(message, duration = 2000, isGameOver = false) {
         messageElement.style.color = "yellow"; // Texto amarelo
         messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
         gameOver = true; // Marcar o jogo como encerrado
+
+        // Fazer a mensagem piscar
+        let blink = true;
+        const blinkInterval = setInterval(() => {
+            messageElement.style.visibility = blink ? "visible" : "hidden";
+            blink = !blink;
+        }, 500);
+
+        // Parar o piscar após o tempo definido
+        setTimeout(() => {
+            clearInterval(blinkInterval);
+            messageElement.style.visibility = "visible"; // Garantir que fique visível no final
+        }, duration);
     } else {
         // Configuração padrão para outras mensagens
         messageElement.style.color = "white";
         messageElement.style.fontSize = "24px";
-    }
+        messageElement.textContent = message;
+        messageElement.style.display = "block";
 
-    messageElement.textContent = message;
-    messageElement.style.display = "block";
-
-    if (!isGameOver) {
         setTimeout(() => {
             messageElement.style.display = "none";
         }, duration);
     }
+
+    messageElement.textContent = message;
+    messageElement.style.display = "block";
 }
 
 // Atualizar o jogo
