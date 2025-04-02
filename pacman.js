@@ -138,12 +138,27 @@ messageElement.style.display = "none";
 document.body.appendChild(messageElement);
 
 // Função para exibir mensagens no jogo
-function showMessage(message, duration = 2000) {
+function showMessage(message, duration = 2000, isGameOver = false) {
+    if (isGameOver) {
+        // Configurar fundo preto e texto amarelo para "Game Over"
+        document.body.style.backgroundColor = "black";
+        document.body.style.backgroundImage = "none"; // Remover qualquer imagem de fundo
+        messageElement.style.color = "yellow"; // Texto amarelo
+        messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
+    } else {
+        // Configuração padrão para outras mensagens
+        messageElement.style.color = "white";
+        messageElement.style.fontSize = "24px";
+    }
+
     messageElement.textContent = message;
     messageElement.style.display = "block";
-    setTimeout(() => {
-        messageElement.style.display = "none";
-    }, duration);
+
+    if (!isGameOver) {
+        setTimeout(() => {
+            messageElement.style.display = "none";
+        }, duration);
+    }
 }
 
 // Atualizar o jogo
@@ -258,7 +273,7 @@ function updateGhosts() {
                     showMessage(`Você perdeu uma vida! Vidas restantes: ${lives}`);
                     resetPositions();
                 } else {
-                    showMessage(`Game Over! Pontuação: ${score}`, 5000);
+                    showMessage("GAME OVER", 5000, true);
                     setTimeout(() => document.location.reload(), 5000);
                 }
             }
