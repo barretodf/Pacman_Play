@@ -49,10 +49,10 @@ let lives = 3;
 
 // Fantasmas
 let ghosts = [
-    { x: 6 * TILE_SIZE + TILE_SIZE / 2, y: 4 * TILE_SIZE + TILE_SIZE / 2, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
-    { x: 7 * TILE_SIZE + TILE_SIZE / 2, y: 4 * TILE_SIZE + TILE_SIZE / 2, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
-    { x: 6 * TILE_SIZE + TILE_SIZE / 2, y: 5 * TILE_SIZE + TILE_SIZE / 2, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
-    { x: 7 * TILE_SIZE + TILE_SIZE / 2, y: 5 * TILE_SIZE + TILE_SIZE / 2, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
+    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
+    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
+    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
+    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
 ];
 
 // Capturar entrada do jogador
@@ -250,8 +250,8 @@ function updateGhosts() {
         if (Math.abs(ghost.x - pacman.x) < PACMAN_RADIUS && Math.abs(ghost.y - pacman.y) < PACMAN_RADIUS) {
             if (ghost.vulnerable) {
                 score += 200;
-                ghost.x = (6 + ghosts.indexOf(ghost)) * TILE_SIZE + TILE_SIZE / 2;
-                ghost.y = 4 * TILE_SIZE + TILE_SIZE / 2;
+                ghost.x = (13 + (ghosts.indexOf(ghost) % 2)) * TILE_SIZE + TILE_SIZE / 2;
+                ghost.y = (10 + Math.floor(ghosts.indexOf(ghost) / 2)) * TILE_SIZE + TILE_SIZE / 2;
             } else {
                 lives--;
                 if (lives > 0) {
@@ -273,8 +273,8 @@ function resetPositions() {
     pacman.direction = "STOP";
 
     ghosts.forEach((ghost, index) => {
-        ghost.x = (6 + index) * TILE_SIZE + TILE_SIZE / 2;
-        ghost.y = 4 * TILE_SIZE + TILE_SIZE / 2;
+        ghost.x = (13 + (index % 2)) * TILE_SIZE + TILE_SIZE / 2; // Alternar entre colunas 13 e 14
+        ghost.y = (10 + Math.floor(index / 2)) * TILE_SIZE + TILE_SIZE / 2; // Alternar entre linhas 10 e 11
     });
 }
 
