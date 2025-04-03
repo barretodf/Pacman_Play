@@ -146,17 +146,20 @@ function showMessage(message, duration = 2000, isGameOver = false) {
         gameOver = true; // Marcar o jogo como encerrado
 
         // Fazer a mensagem piscar
-        let blink = true;
+        let blinkCount = 0; // Contador de piscadas
         const blinkInterval = setInterval(() => {
-            messageElement.style.visibility = blink ? "visible" : "hidden";
-            blink = !blink;
+            messageElement.style.visibility = blinkCount % 2 === 0 ? "visible" : "hidden";
+            blinkCount++;
+            if (blinkCount >= 20) { // 10 piscadas (2 estados por piscada: visível e oculto)
+                clearInterval(blinkInterval);
+                messageElement.style.visibility = "visible"; // Garantir que fique visível no final
+            }
         }, 500);
 
-        // Parar o piscar após o tempo definido
+        // Parar o piscar após o tempo definido (dobrar o tempo)
         setTimeout(() => {
-            clearInterval(blinkInterval);
             messageElement.style.visibility = "visible"; // Garantir que fique visível no final
-        }, duration);
+        }, duration * 2); // Dobrar o tempo de exibição
     } else {
         // Configuração padrão para outras mensagens
         messageElement.style.color = "white";
@@ -405,6 +408,24 @@ function drawPacman() {
     ctx.beginPath();
     ctx.arc(pacman.x, pacman.y, PACMAN_RADIUS, startAngle, endAngle);
     ctx.lineTo(pacman.x, pacman.y);
+    ctx.fill();
+
+    // Adicionar um único olho ao Pac-Man
+    const eyeOffsetX = PACMAN_RADIUS * 0.3; // Posição horizontal do olho
+    const eyeOffsetY = -PACMAN_RADIUS * 0.5; // Posição vertical do olho
+    const eyeRadius = PACMAN_RADIUS * 0.15; // Tamanho do olho
+
+    // Desenhar o olho
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(pacman.x + eyeOffsetX, pacman.y + eyeOffsetY, eyeRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Desenhar a pupila
+    const pupilRadius = eyeRadius * 0.5;
+    ctx.fillStyle = "black";
+    ctx.beginPath();
+    ctx.arc(pacman.x + eyeOffsetX, pacman.y + eyeOffsetY, pupilRadius, 0, Math.PI * 2);
     ctx.fill();
 }
 
