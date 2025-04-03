@@ -132,9 +132,15 @@ document.body.appendChild(messageElement);
 // Função para exibir mensagens no jogo
 function showMessage(message, duration = 2000, isGameOver = false) {
     if (isGameOver) {
-        // Configurar fundo preto e texto amarelo para "Game Over"
-        document.body.style.backgroundColor = "black";
-        document.body.style.backgroundImage = "none"; // Remover qualquer imagem de fundo
+        // Configurar fundo com a imagem "FundoFim.png" para "Game Over"
+        document.body.style.backgroundImage = "url('./assets/FundoFim.png')"; // Adicionar imagem de fundo
+        document.body.style.backgroundSize = "50%"; // Reduzir o tamanho da imagem para 50%
+        document.body.style.backgroundRepeat = "no-repeat"; // Evitar repetição da imagem
+        document.body.style.backgroundPosition = "center"; // Centralizar a imagem
+
+        // Ocultar o canvas do labirinto
+        canvas.style.display = "none";
+
         messageElement.style.color = "yellow"; // Texto amarelo
         messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
         gameOver = true; // Marcar o jogo como encerrado
