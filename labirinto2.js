@@ -26,3 +26,16 @@ export const maze = [
 ];
 
 export const mazeColor = "green"; // Cor do labirinto 2
+
+export const ghosts = [
+    {
+        x: 13.5 * 28, // Coordenada inicial na casa dos fantasmas
+        y: 10.5 * 28,
+        speed: 1.5, // Velocidade do fantasma
+        direction: "STOP",
+        color: "red", // Cor do fantasma
+        originalColor: "red",
+        vulnerable: false,
+        fleeing: false
+    }
+];

@@ -1,5 +1,5 @@
 import { maze as maze1 } from './labirinto1.js'; // Importar o labirinto da fase 1
-import { maze as maze2, mazeColor as mazeColor2 } from './labirinto2.js'; // Importar o labirinto e cor da fase 2
+import { maze as maze2, mazeColor as mazeColor2, ghosts as ghosts2 } from './labirinto2.js'; // Importar o labirinto, cor e fantasmas da fase 2
 import { maze as maze3, mazeColor as mazeColor3 } from './labirinto3.js'; // Importar o labirinto e cor da fase 3
 import { maze as maze4, mazeColor as mazeColor4 } from './labirinto4.js'; // Importar o labirinto e cor da fase 4
 import { maze as maze5, mazeColor as mazeColor5 } from './labirinto5.js'; // Importar o labirinto e cor da fase 5
@@ -347,6 +347,7 @@ function resetMaze() {
     if (level === 2) {
         maze = maze2; // Alterar para o labirinto da fase 2
         mazeColor = mazeColor2; // Alterar para a cor do labirinto da fase 2
+        ghosts.push(...ghosts2); // Adicionar os fantasmas da fase 2
     } else if (level === 3) {
         maze = maze3; // Alterar para o labirinto da fase 3
         mazeColor = mazeColor3; // Alterar para a cor do labirinto da fase 3
@@ -389,6 +390,20 @@ function resetMaze() {
     pacman.x = 1 * TILE_SIZE + TILE_SIZE / 2;
     pacman.y = 1 * TILE_SIZE + TILE_SIZE / 2;
     pacman.direction = "STOP";
+
+    // Adicionar um novo fantasma a cada fase
+    if (level > ghosts.length) {
+        ghosts.push({
+            x: 13.5 * TILE_SIZE, // Coordenada inicial na casa dos fantasmas
+            y: 10.5 * TILE_SIZE,
+            speed: 1.5 + level * 0.1, // Aumentar a velocidade com o nível
+            direction: "STOP",
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`, // Cor aleatória
+            originalColor: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            vulnerable: false,
+            fleeing: false
+        });
+    }
 }
 
 // Desenhar vidas
