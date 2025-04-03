@@ -306,7 +306,7 @@ function updateGhosts() {
         // Verificar se o Pac-Man foi pego
         if (Math.abs(ghost.x - pacman.x) < PACMAN_RADIUS && Math.abs(ghost.y - pacman.y) < PACMAN_RADIUS) {
             if (ghost.vulnerable) {
-                score += 200;
+                score += 20; // Adicionar 20 pontos ao jogador
                 ghost.x = 13.5 * TILE_SIZE; // Reposicionar no centro da casa dos fantasmas
                 ghost.y = 10.5 * TILE_SIZE;
                 ghost.direction = "STOP";
