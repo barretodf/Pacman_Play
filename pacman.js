@@ -5,6 +5,7 @@ import { maze as maze4, mazeColor as mazeColor4 } from './labirinto4.js'; // Imp
 import { maze as maze5, mazeColor as mazeColor5 } from './labirinto5.js'; // Importar o labirinto e cor da fase 5
 import { maze as maze6, mazeColor as mazeColor6 } from './labirinto6.js'; // Importar o labirinto e cor da fase 6
 import { maze as maze7, mazeColor as mazeColor7 } from './labirinto7.js'; // Importar o labirinto e cor da fase 7
+import { maze as maze8, mazeColor as mazeColor8 } from './labirinto8.js'; // Importar o labirinto e cor da fase 8
 
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
@@ -319,6 +320,9 @@ function resetMaze() {
     } else if (level === 7) {
         maze = maze7; // Alterar para o labirinto da fase 7
         mazeColor = mazeColor7; // Alterar para a cor do labirinto da fase 7
+    } else if (level === 8) {
+        maze = maze8; // Alterar para o labirinto da fase 8
+        mazeColor = mazeColor8; // Alterar para a cor do labirinto da fase 8
     } else {
         maze = maze1; // Reiniciar para o labirinto da fase 1
         mazeColor = "blue"; // Cor do labirinto da fase 1
