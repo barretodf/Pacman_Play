@@ -6,6 +6,7 @@ import { maze as maze5, mazeColor as mazeColor5 } from './labirinto5.js'; // Imp
 import { maze as maze6, mazeColor as mazeColor6 } from './labirinto6.js'; // Importar o labirinto e cor da fase 6
 import { maze as maze7, mazeColor as mazeColor7 } from './labirinto7.js'; // Importar o labirinto e cor da fase 7
 import { maze as maze8, mazeColor as mazeColor8 } from './labirinto8.js'; // Importar o labirinto e cor da fase 8
+import { maze as maze9, mazeColor as mazeColor9, mazeBorderColor as mazeBorderColor9 } from './labirinto9.js'; // Importar o labirinto, cor e borda da fase 9
 
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
@@ -35,6 +36,7 @@ let gameOver = false; // Variável para controlar o estado do jogo
 
 let maze = maze1; // Labirinto inicial
 let mazeColor = "blue"; // Cor inicial do labirinto (fase 1)
+let mazeBorderColor = "black"; // Cor inicial da borda do labirinto
 
 // Fantasmas
 let ghosts = [
@@ -323,12 +325,18 @@ function resetMaze() {
     } else if (level === 8) {
         maze = maze8; // Alterar para o labirinto da fase 8
         mazeColor = mazeColor8; // Alterar para a cor do labirinto da fase 8
+    } else if (level === 9) {
+        maze = maze9; // Alterar para o labirinto da fase 9
+        mazeColor = mazeColor9; // Alterar para a cor do labirinto da fase 9
+        mazeBorderColor = mazeBorderColor9; // Alterar para a cor da borda do labirinto da fase 9
     } else {
         maze = maze1; // Reiniciar para o labirinto da fase 1
         mazeColor = "blue"; // Cor do labirinto da fase 1
+        mazeBorderColor = "black"; // Cor da borda do labirinto da fase 1
     }
     canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura do canvas
     canvas.height = maze.length * TILE_SIZE; // Ajustar altura do canvas
+    canvas.style.borderColor = mazeBorderColor; // Ajustar a cor da borda do canvas
     maze.forEach((row, rowIndex) => {
         maze[rowIndex] = row.map(cell => (cell === 0 ? 2 : cell)); // Reiniciar pontos
     });
