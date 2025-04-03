@@ -34,6 +34,7 @@ let pacman = {
 let level = 1;
 let lives = 3;
 let gameOver = false; // Variável para controlar o estado do jogo
+let isPaused = false; // Variável para controlar o estado de pausa
 
 let maze = maze1; // Labirinto inicial
 let mazeColor = "blue"; // Cor inicial do labirinto (fase 1)
@@ -481,18 +482,30 @@ function draw() {
     ctx.fillText("Edmilson Barreto", canvas.width / 2 - 80, 20); // Centralizar na barra superior
 }
 
+// Função para alternar pausa
+function togglePause() {
+    isPaused = !isPaused;
+    const pauseButton = document.getElementById("pauseButton");
+    pauseButton.textContent = isPaused ? "Continuar" : "Pausar"; // Alterar o texto do botão
+}
+
 // Loop do jogo
 function gameLoop() {
-    update();
-    updateGhosts();
-    draw();
+    if (!isPaused && !gameOver) {
+        update();
+        updateGhosts();
+        draw();
+    }
     requestAnimationFrame(gameLoop);
 }
 
 // Função para iniciar o jogo
 function startGame() {
     const startButton = document.getElementById("startButton");
-    startButton.style.display = "none"; // Esconder o botão após iniciar o jogo
+    const pauseButton = document.getElementById("pauseButton");
+
+    startButton.style.display = "none"; // Esconder o botão de iniciar
+    pauseButton.style.display = "block"; // Mostrar o botão de pausa
     canvas.style.display = "block"; // Mostrar o canvas
     draw(); // Garantir que o labirinto seja desenhado inicialmente
     gameLoop(); // Iniciar o loop do jogo
@@ -501,5 +514,8 @@ function startGame() {
 // Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startButton");
+    const pauseButton = document.getElementById("pauseButton");
+
     startButton.addEventListener("click", startGame);
+    pauseButton.addEventListener("click", togglePause); // Vincular o botão de pausa à função
 });
