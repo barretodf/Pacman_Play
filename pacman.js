@@ -1,4 +1,5 @@
-import { maze } from './labirinto1.js'; // Importar o labirinto do arquivo externo
+import { maze as maze1 } from './labirinto1.js'; // Importar o labirinto da fase 1
+import { maze as maze2, mazeColor as mazeColor2 } from './labirinto2.js'; // Importar o labirinto e cor da fase 2
 
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
@@ -6,8 +7,8 @@ const TILE_SIZE = 28; // Reduzir o tamanho das trilhas para diminuir a largura d
 
 // Garantir que o canvas seja exibido corretamente
 canvas.style.display = "none"; // Esconder o canvas inicialmente
-canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
-canvas.height = maze.length * TILE_SIZE; // Ajustar altura com base no número de linhas do labirinto
+canvas.width = maze1[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
+canvas.height = maze1.length * TILE_SIZE; // Ajustar altura com base no número de linhas do labirinto
 const ctx = canvas.getContext("2d");
 
 // Configuração do jogo
@@ -25,6 +26,9 @@ let pacman = {
 let level = 1;
 let lives = 3;
 let gameOver = false; // Variável para controlar o estado do jogo
+
+let maze = maze1; // Labirinto inicial
+let mazeColor = "blue"; // Cor inicial do labirinto (fase 1)
 
 // Fantasmas
 let ghosts = [
@@ -206,8 +210,8 @@ function update() {
         level++;
         pacman.speed += 0.5;
         ghosts.forEach(ghost => ghost.speed += 0.5);
-        showMessage(`Nível ${level}!`);
-        resetMaze();
+        showMessage(`Fase ${level}!`); // Exibir mensagem de fase
+        resetMaze(); // Alterar o labirinto para a nova fase
     }
 
     // Animação da boca do Pac-Man
@@ -290,10 +294,19 @@ function resetPositions() {
     });
 }
 
-// Reiniciar o labirinto
+// Atualizar o labirinto ao avançar de nível
 function resetMaze() {
+    if (level === 2) {
+        maze = maze2; // Alterar para o labirinto da fase 2
+        mazeColor = mazeColor2; // Alterar para a cor do labirinto da fase 2
+    } else {
+        maze = maze1; // Reiniciar para o labirinto da fase 1
+        mazeColor = "blue"; // Cor do labirinto da fase 1
+    }
+    canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura do canvas
+    canvas.height = maze.length * TILE_SIZE; // Ajustar altura do canvas
     maze.forEach((row, rowIndex) => {
-        maze[rowIndex] = row.map(cell => (cell === 0 ? 2 : cell));
+        maze[rowIndex] = row.map(cell => (cell === 0 ? 2 : cell)); // Reiniciar pontos
     });
 }
 
@@ -343,7 +356,7 @@ function draw() {
     for (let row = 0; row < maze.length; row++) {
         for (let col = 0; col < maze[row].length; col++) {
             if (maze[row][col] === 1) {
-                ctx.fillStyle = "blue"; // Cor das paredes
+                ctx.fillStyle = mazeColor; // Cor das paredes
                 ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE); // Preencher as paredes
             } else if (maze[row][col] === 2) {
                 ctx.fillStyle = "white"; // Cor dos pontos
