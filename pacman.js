@@ -1,33 +1,11 @@
+import { maze } from './labirinto1.js'; // Importar o labirinto do arquivo externo
+
 // Configuração do Canvas
 const canvas = document.getElementById("gameCanvas");
 const TILE_SIZE = 28; // Reduzir o tamanho das trilhas para diminuir a largura dos corredores
-// Labirinto (1 = parede, 0 = caminho, 2 = ponto, 3 = pílula, 4 = casa dos fantasmas)
-const maze = [
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [3,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3], // Pílulas (3) nas laterais
-    [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
-    [1,2,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,1,1,1,1,1,2,1,1,1,2,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,4,4,4,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,4,0,4,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,4,0,4,2,2,2,2,2,2,2,2,2,2,2,1],
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,4,4,4,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2], // Pílulas (3) nas laterais
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,1,1,1,1,2,1,1,2,1,1,1,1,1,1,1,1,2,1,1,2,1,1,1,1,2,1],
-    [1,2,2,2,2,2,2,1,1,2,2,2,2,2,2,2,2,2,2,1,1,2,2,2,2,2,2,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [1,1,1,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,1,1,1,1,1],
-    [3,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,0,3], // Pílulas (3) nas laterais
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-];
+
+// Garantir que o canvas seja exibido corretamente
+canvas.style.display = "none"; // Esconder o canvas inicialmente
 canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura com base no número de colunas do labirinto
 canvas.height = maze.length * TILE_SIZE; // Ajustar altura com base no número de linhas do labirinto
 const ctx = canvas.getContext("2d");
@@ -402,13 +380,17 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+// Função para iniciar o jogo
+function startGame() {
+    const startButton = document.getElementById("startButton");
+    startButton.style.display = "none"; // Esconder o botão após iniciar o jogo
+    canvas.style.display = "block"; // Mostrar o canvas
+    draw(); // Garantir que o labirinto seja desenhado inicialmente
+    gameLoop(); // Iniciar o loop do jogo
+}
+
 // Certifique-se de que o jogo seja iniciado apenas quando o botão for clicado
 document.addEventListener("DOMContentLoaded", () => {
     const startButton = document.getElementById("startButton");
-    startButton.addEventListener("click", () => {
-        startButton.style.display = "none"; // Esconder o botão após iniciar o jogo
-        canvas.style.display = "block"; // Mostrar o canvas
-        draw(); // Garantir que o labirinto seja desenhado inicialmente
-        gameLoop(); // Iniciar o loop do jogo
-    });
+    startButton.addEventListener("click", startGame);
 });
