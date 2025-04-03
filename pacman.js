@@ -271,12 +271,24 @@ function updateGhosts() {
             ghost.y = newY;
         }
 
+        // Verificar se o fantasma saiu dos limites do labirinto
+        if (
+            ghost.x < 0 || ghost.x > canvas.width ||
+            ghost.y < 0 || ghost.y > canvas.height
+        ) {
+            // Reposicionar o fantasma no centro da casa dos fantasmas
+            ghost.x = 13.5 * TILE_SIZE; // Coordenada central da casa dos fantasmas
+            ghost.y = 10.5 * TILE_SIZE; // Coordenada central da casa dos fantasmas
+            ghost.direction = "STOP"; // Parar o movimento temporariamente
+        }
+
         // Verificar se o Pac-Man foi pego
         if (Math.abs(ghost.x - pacman.x) < PACMAN_RADIUS && Math.abs(ghost.y - pacman.y) < PACMAN_RADIUS) {
             if (ghost.vulnerable) {
                 score += 200;
-                ghost.x = (13 + (ghosts.indexOf(ghost) % 2)) * TILE_SIZE + TILE_SIZE / 2;
-                ghost.y = (10 + Math.floor(ghosts.indexOf(ghost) / 2)) * TILE_SIZE + TILE_SIZE / 2;
+                ghost.x = 13.5 * TILE_SIZE; // Reposicionar no centro da casa dos fantasmas
+                ghost.y = 10.5 * TILE_SIZE;
+                ghost.direction = "STOP";
             } else {
                 lives--;
                 if (lives > 0) {
