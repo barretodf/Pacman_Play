@@ -142,6 +142,10 @@ function showMessage(message, duration = 2000, isGameOver = false) {
         // Ocultar o canvas do labirinto
         canvas.style.display = "none";
 
+        // Ocultar o botão de pausa
+        const pauseButton = document.getElementById("pauseButton");
+        pauseButton.style.display = "none";
+
         messageElement.style.color = "yellow"; // Texto amarelo
         messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
         gameOver = true; // Marcar o jogo como encerrado
