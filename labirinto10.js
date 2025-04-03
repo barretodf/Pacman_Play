@@ -25,5 +25,5 @@ export const maze = [
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
-export const mazeColor = "black"; // Cor do labirinto 10
-export const mazeBorderColor = "blue"; // Cor da borda do labirinto 10
+export const mazeColor = "#FF6347"; // Cor do labirinto 10
+export const mazeBorderColor = "white"; // Cor da borda do labirinto 10

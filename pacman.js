@@ -329,11 +329,11 @@ function resetMaze() {
     } else if (level === 9) {
         maze = maze9; // Alterar para o labirinto da fase 9
         mazeColor = mazeColor9; // Alterar para a cor do labirinto da fase 9
-        mazeBorderColor = mazeBorderColor9; // Alterar para a cor da borda do labirinto da fase 9
+        mazeBorderColor = mazeBorderColor9; // Atualizar a cor da borda para a fase 9
     } else if (level === 10) {
         maze = maze10; // Alterar para o labirinto da fase 10
         mazeColor = mazeColor10; // Alterar para a cor do labirinto da fase 10
-        mazeBorderColor = mazeBorderColor10; // Alterar para a cor da borda do labirinto da fase 10
+        mazeBorderColor = mazeBorderColor10; // Atualizar a cor da borda para a fase 10
     } else {
         maze = maze1; // Reiniciar para o labirinto da fase 1
         mazeColor = "blue"; // Cor do labirinto da fase 1
@@ -341,10 +341,15 @@ function resetMaze() {
     }
     canvas.width = maze[0].length * TILE_SIZE; // Ajustar largura do canvas
     canvas.height = maze.length * TILE_SIZE; // Ajustar altura do canvas
-    canvas.style.borderColor = mazeBorderColor; // Ajustar a cor da borda do canvas
+    canvas.style.borderColor = mazeBorderColor || "white"; // Garantir que a borda seja atualizada
     maze.forEach((row, rowIndex) => {
         maze[rowIndex] = row.map(cell => (cell === 0 ? 2 : cell)); // Reiniciar pontos
     });
+
+    // Reiniciar a posição do Pac-Man ao ponto inicial
+    pacman.x = 1 * TILE_SIZE + TILE_SIZE / 2;
+    pacman.y = 1 * TILE_SIZE + TILE_SIZE / 2;
+    pacman.direction = "STOP";
 }
 
 // Desenhar vidas
