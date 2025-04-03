@@ -54,6 +54,7 @@ document.addEventListener("keydown", function(event) {
     if (event.key === "ArrowRight") pacman.direction = "RIGHT";
     if (event.key === "ArrowUp") pacman.direction = "UP";
     if (event.key === "ArrowDown") pacman.direction = "DOWN";
+    if (event.key === " ") togglePause(); // Alternar pausa ao pressionar a tecla espaço
 });
 
 // Função para verificar colisão com paredes
@@ -144,7 +145,7 @@ function showMessage(message, duration = 2000, isGameOver = false) {
 
         // Ocultar o botão de pausa
         const pauseButton = document.getElementById("pauseButton");
-        pauseButton.style.display = "none";
+        pauseButton.style.display = "none"; // Garantir que o botão de pausa desapareça
 
         messageElement.style.color = "yellow"; // Texto amarelo
         messageElement.style.fontSize = "48px"; // Aumentar o tamanho do texto
