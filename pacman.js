@@ -228,6 +228,7 @@ function update() {
         level++;
         pacman.speed += 0.5;
         ghosts.forEach(ghost => ghost.speed += 0.5);
+        lives++; // Adicionar uma vida como prêmio
         showMessage(`Fase ${level}!`); // Exibir mensagem de fase
         resetMaze(); // Alterar o labirinto para a nova fase
     }
@@ -464,6 +465,9 @@ function draw() {
     ctx.font = "20px Arial";
     ctx.fillText("Pontuação: " + score, 10, 20);
     drawLives();
+
+    // Alterar para exibir apenas "Edmilson Barreto"
+    ctx.fillText("Edmilson Barreto", canvas.width / 2 - 80, 20); // Centralizar na barra superior
 }
 
 // Loop do jogo
