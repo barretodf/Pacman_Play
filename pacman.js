@@ -41,10 +41,10 @@ let mazeBorderColor = "black"; // Cor inicial da borda do labirinto
 
 // Fantasmas
 let ghosts = [
-    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.5, direction: "LEFT", color: "red", vulnerable: false, fleeing: false },
-    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.7, direction: "UP", color: "pink", vulnerable: false, fleeing: false },
-    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.6, direction: "DOWN", color: "cyan", vulnerable: false, fleeing: false },
-    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.8, direction: "RIGHT", color: "orange", vulnerable: false, fleeing: false }
+    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.5, direction: "LEFT", color: "red", originalColor: "red", vulnerable: false, fleeing: false },
+    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 10 * TILE_SIZE + TILE_SIZE / 2, speed: 1.7, direction: "UP", color: "pink", originalColor: "pink", vulnerable: false, fleeing: false },
+    { x: 13 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.6, direction: "DOWN", color: "cyan", originalColor: "cyan", vulnerable: false, fleeing: false },
+    { x: 14 * TILE_SIZE + TILE_SIZE / 2, y: 11 * TILE_SIZE + TILE_SIZE / 2, speed: 1.8, direction: "RIGHT", color: "orange", originalColor: "orange", vulnerable: false, fleeing: false }
 ];
 
 // Capturar entrada do jogador
@@ -208,19 +208,30 @@ function update() {
         maze[row][col] = 0;
         score += 50;
 
-        // Tornar fantasmas vulneráveis e fazê-los fugir
+        // Tornar fantasmas vulneráveis e fazê-los piscar
         ghosts.forEach(ghost => {
             ghost.vulnerable = true;
             ghost.fleeing = true;
         });
 
+        // Iniciar o piscar dos fantasmas
+        let blink = true;
+        const blinkInterval = setInterval(() => {
+            ghosts.forEach(ghost => {
+                ghost.color = blink ? "white" : ghost.originalColor || ghost.color;
+            });
+            blink = !blink;
+        }, 300);
+
         // Reverter estado dos fantasmas após 10 segundos
         setTimeout(() => {
+            clearInterval(blinkInterval); // Parar o piscar
             ghosts.forEach(ghost => {
                 ghost.vulnerable = false;
                 ghost.fleeing = false;
+                ghost.color = ghost.originalColor || ghost.color; // Restaurar a cor original
             });
-        }, 20000);
+        }, 10000);
     }
 
     // Verificar se todos os pontos foram coletados
