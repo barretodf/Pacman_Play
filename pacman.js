@@ -264,28 +264,49 @@ function update() {
 function updateGhosts() {
     if (gameOver) return; // Interromper a atualização dos fantasmas se o jogo estiver encerrado
 
-    ghosts.forEach(ghost => {
-        let dx = pacman.x - ghost.x;
-        let dy = pacman.y - ghost.y;
-
-        if (ghost.fleeing) {
-            // Fantasmas fogem do Pac-Man
-            if (Math.abs(dx) > Math.abs(dy)) {
-                ghost.direction = dx > 0 ? "LEFT" : "RIGHT";
-            } else {
-                ghost.direction = dy > 0 ? "UP" : "DOWN";
-            }
-        } else {
-            // Fantasmas perseguem o Pac-Man
-            if (Math.random() < 0.5) {
-                ghost.direction = dx > 0 ? "RIGHT" : "LEFT";
-            } else {
-                ghost.direction = dy > 0 ? "DOWN" : "UP";
-            }
-        }
-
+    ghosts.forEach((ghost, index) => {
         let newX = ghost.x;
         let newY = ghost.y;
+
+        if (index < 4) {
+            // Fantasmas originais perseguem o Pac-Man
+            let dx = pacman.x - ghost.x;
+            let dy = pacman.y - ghost.y;
+
+            if (ghost.fleeing) {
+                // Fantasmas fogem do Pac-Man
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    ghost.direction = dx > 0 ? "LEFT" : "RIGHT";
+                } else {
+                    ghost.direction = dy > 0 ? "UP" : "DOWN";
+                }
+            } else {
+                // Fantasmas perseguem o Pac-Man
+                if (Math.random() < 0.5) {
+                    ghost.direction = dx > 0 ? "RIGHT" : "LEFT";
+                } else {
+                    ghost.direction = dy > 0 ? "DOWN" : "UP";
+                }
+            }
+        } else {
+            // Fantasmas adicionais caminham suavemente pelas trilhas
+            if (ghost.direction === "STOP" || Math.random() < 0.1) {
+                // Escolher uma nova direção aleatória válida
+                const directions = ["LEFT", "RIGHT", "UP", "DOWN"];
+                const validDirections = directions.filter(dir => {
+                    let testX = ghost.x;
+                    let testY = ghost.y;
+                    if (dir === "LEFT") testX -= TILE_SIZE;
+                    if (dir === "RIGHT") testX += TILE_SIZE;
+                    if (dir === "UP") testY -= TILE_SIZE;
+                    if (dir === "DOWN") testY += TILE_SIZE;
+                    return !checkCollision(testX, testY);
+                });
+                if (validDirections.length > 0) {
+                    ghost.direction = validDirections[Math.floor(Math.random() * validDirections.length)];
+                }
+            }
+        }
 
         if (ghost.direction === "LEFT") newX -= ghost.speed;
         if (ghost.direction === "RIGHT") newX += ghost.speed;
@@ -296,6 +317,8 @@ function updateGhosts() {
         if (!checkCollision(newX, newY)) {
             ghost.x = newX;
             ghost.y = newY;
+        } else {
+            ghost.direction = "STOP"; // Parar se encontrar uma parede
         }
 
         // Verificar se o fantasma saiu dos limites do labirinto
