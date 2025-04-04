@@ -485,6 +485,14 @@ function drawPacman() {
     ctx.fill();
 }
 
+// Estado para controlar o piscar das pílulas
+let blinkState = true;
+
+function togglePillBlinking() {
+    blinkState = !blinkState; // Alternar o estado de piscar
+    setTimeout(togglePillBlinking, 500); // Alternar a cada 500ms
+}
+
 // Verificar se o labirinto está sendo desenhado corretamente
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpar o canvas antes de desenhar
@@ -501,10 +509,12 @@ function draw() {
                 ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 4, 0, Math.PI * 2); // Reduzir o tamanho dos pontos
                 ctx.fill();
             } else if (maze[row][col] === 3) {
-                ctx.fillStyle = "gold"; // Cor das pílulas
-                ctx.beginPath();
-                ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 6, 0, Math.PI * 2); // Reduzir o tamanho das pílulas
-                ctx.fill();
+                if (blinkState) {
+                    ctx.fillStyle = "gold"; // Cor das pílulas
+                    ctx.beginPath();
+                    ctx.arc(col * TILE_SIZE + TILE_SIZE / 2, row * TILE_SIZE + TILE_SIZE / 2, 6, 0, Math.PI * 2); // Reduzir o tamanho das pílulas
+                    ctx.fill();
+                }
             } else if (maze[row][col] === 4) {
                 ctx.fillStyle = "purple"; // Cor da casa dos fantasmas
                 ctx.fillRect(col * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE); // Preencher a casa dos fantasmas
@@ -562,3 +572,6 @@ document.addEventListener("DOMContentLoaded", () => {
     startButton.addEventListener("click", startGame);
     pauseButton.addEventListener("click", togglePause); // Vincular o botão de pausa à função
 });
+
+// Iniciar o piscar das pílulas ao carregar o jogo
+togglePillBlinking();
